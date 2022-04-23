@@ -1,65 +1,40 @@
 Accelergy-Timeloop Infrastructure
 ---------------------------------------------------
 
-This docker aims to provide an experimental environment for easy plug-and-play of examples that run on the accelergy-timeloop DNN accelerator evaluation infrastructure. 
-You can also use the src included in this docker to perform native installation of the tools. 
 
-See instructions for both options below
+Installation (Apr. 23, 2022 update)
+---------------------------------------------------
 
-This docker is modified based on: https://github.com/jsemer/timeloop-accelergy-tutorial
+Based on [here](http://accelergy.mit.edu/infra_instructions.html):
 
-Native Install
------------------
-
-```
-      % git clone --recurse-submodules https://github.com/Accelergy-Project/accelergy-timeloop-infrastructure.git
-      % cd accelergy-timeloop-infrastructure
-      % make pull
-      % cd src/  # check all the sources here
-      % to install all the tools: http://accelergy.mit.edu/infra_instructions.html
-```
-
-Start the container
------------------
-
-- Put the *docker-compose.yaml* file in an otherwise empty directory
-- Cd to the directory containing the file
-- Edit USER_UID and USER_GID in the file to the desired owner of your files (echo $UID, echo $GID)
-- Run the following command:
-```
-      % docker-compose run infrastructure 
-```
-- Follow the instructions in the REAME directory to get public examples for this infrastructure
-
-
-Refresh the container
-----------------------
-
-To update the Docker container run:
-
-```
-     % docker-compose pull
-````
-
-
-
-Build the image
----------------
-
-```
-      % git clone --recurse-submodules https://github.com/Accelergy-Project/accelergy-timeloop-infrastructure.git
-      % cd accelergy-timeloop-infrastructure
-      % export DOCKER_EXE=<name of docker program, e.g., docker>
-      % make pull
-      % make build [BUILD_FLAGS="<Docker build flags, e.g., --no-cache>"]
+```bash
+sudo apt install scons libconfig++-dev libboost-dev libboost-iostreams-dev libboost-serialization-dev libyaml-cpp-dev libncurses-dev libtinfo-dev libgpm-dev git build-essential python3-pip
+git clone --recurse-submodules https://github.com/kentangSJTU/accelergy-timeloop-infrastructure-dlh22.git
+cd accelergy-timeloop-infrastructure
+make pull
+cd src/cacti
+make
+cd ../accelergy
+pip install .
+cd ../accelergy-aladdin-plug-in/
+pip install .
+cd ../accelergy-cacti-plug-in/
+pip3 install .
+cp -r ../cacti ~/.local/share/accelergy/estimation_plug_ins/accelergy-cacti-plug-in/
+cd ../accelergy-table-based-plug-ins/
+pip install .
+cd ../timeloop
+cd src/
+ln -s ../pat-public/src/pat .
+cd ..
+scons -j4 --accelergy --static
+cp build/timeloop-* ~/.local/bin
 ```
 
-Push the image to docker hub
-----------------------------
+After that, we can run 
+```bash
+export PATH=$PATH:~/.local/bin
+```
 
-```
-      % cd accelergy-timeloop-infrastructure
-      % export DOCKER_NAME=<name of user with push privileges>
-      % export DOCKER_PASS=<password of user with push privileges>
-      % make push
-```
+or add this line of code to the `~/.bashrc` or `~/.zshrc` file of your machine. Notice that the timeloop repository is from [here](https://github.com/kentangSJTU/timeloop-dlh22).
+
